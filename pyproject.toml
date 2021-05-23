@@ -13,6 +13,7 @@ mss = "^6.1.0"
 numpy = "^1.20.3"
 Pillow = "^8.2.0"
 psutil = "^5.8.0"
+PyAutoGUI = "^0.9.52"
 
 [tool.poetry.dev-dependencies]
 pytest-trio = "^0.7.0"
