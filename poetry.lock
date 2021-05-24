@@ -2142,7 +2142,7 @@ sortedcontainers = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "1a7918138d7cb9b2ad80f273560440e806ab74e01e079d08072d980846b37fc4"
+content-hash = "45433afd1eb15ab06fbe2df6e8306dc3b742099bba8cc9328f344082f4b1ca69"
 
 [metadata.files]
 anyio = [

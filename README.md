@@ -12,6 +12,14 @@ $ python3.9 -m venv venv
 $ source venv/bin/activate
 $ pip install poetry
 $ poetry install
-$ poetry run TODO
+$ poetry run pytest
 
 ```
+
+## TODO
+- fishing bot
+- CI + linters
+- unittests
+- readme
+- sigint handler
+- clustering for water cells

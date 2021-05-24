@@ -56,5 +56,5 @@ if __name__ == '__main__':
     debug = True
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, limit_iterations=2, start_delay=5)
+    cnt = farm_bot(Resources.FISH, debug_mode=debug, limit_iterations=10, start_delay=5)
     logging.info(cnt)

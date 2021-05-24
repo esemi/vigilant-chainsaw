@@ -17,6 +17,7 @@ PyAutoGUI = "^0.9.52"
 
 [tool.poetry.dev-dependencies]
 pytest-trio = "^0.7.0"
+pytest = "^6.2.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
