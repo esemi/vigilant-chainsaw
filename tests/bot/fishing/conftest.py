@@ -14,4 +14,4 @@ def screenshots_dir() -> Path:
 
 @pytest.fixture(scope="module")
 def fixture_farm_state() -> State:
-    yield State(debug=False, current_tick=0)
+    yield State(debug=True, current_tick=0)

@@ -32,29 +32,35 @@ def farm_bot(
     logging.info(f'farm bot on {limit_iterations=} {start_delay=} {resource=}')
     time.sleep(start_delay)
 
-    with mss.mss() as sct:
-        while state.current_tick < limit_iterations or limit_iterations is None:
-            state.current_tick += 1
-            counter['last_tick'] = state.current_tick
+    start_time = time.time()
+    try:
+        with mss.mss() as sct:
+            while limit_iterations is None or state.current_tick < limit_iterations:
+                state.current_tick += 1
+                counter['last_tick'] = state.current_tick
 
-            monitor = select_monitor(sct)
-            screenshot = sct.grab(monitor)
+                monitor = select_monitor(sct)
+                screenshot = sct.grab(monitor)
 
-            if resource is Resources.FISH:
-                next_action = fishing.tick(screenshot, state)
-            else:
-                raise NotImplementedError()
-            logging.info(f'tick complete {next_action=}')
-
-    logging.info(f'farm bot off {counter=}')
+                if resource is Resources.FISH:
+                    logging.info('tick %d', state.current_tick)
+                    next_action = fishing.tick(screenshot, state)
+                    logging.info('tick complete %s', next_action)
+                else:
+                    raise NotImplementedError()
+    except Exception as exc:
+        logging.exception('exception captured', exc_info=exc)
+    finally:
+        fps = state.current_tick / (time.time() - start_time)
+        logging.info(f'farm bot off {counter=} {fps=}')
     return counter
 
 
 if __name__ == '__main__':
     # todo click parse cli options
     # todo sigint handle
-    debug = True
+    debug = False
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, limit_iterations=10, start_delay=5)
+    cnt = farm_bot(Resources.FISH, debug_mode=debug, limit_iterations=500, start_delay=5)
     logging.info(cnt)

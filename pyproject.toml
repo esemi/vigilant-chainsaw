@@ -15,6 +15,7 @@ PyAutoGUI = "^0.9.52"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 pytest-cov = "^2.12.0"
+wemake-python-styleguide = "^0.15.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -22,3 +23,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 farm = 'bot:farm_bot'
+packages = [
+    { include = "bot" },
+]

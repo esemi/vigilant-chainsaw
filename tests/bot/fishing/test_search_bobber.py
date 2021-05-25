@@ -19,7 +19,7 @@ def test_search_bobber_happy_path(screenshots_dir: Path, fixture_farm_state: Sta
     assert len(res) > 0
 
 
-@pytest.mark.parametrize('frame_image_path', ['nibble_1.png', 'nibble_2.png'])
+@pytest.mark.parametrize('frame_image_path', ['nibble_1.png', 'nibble_2.png', 'nibble_3.png', 'nibble_4.png'])
 def test_search_bobber_false_positive(screenshots_dir: Path, fixture_farm_state: State, frame_image_path: str):
     screenshot = cv2.imread(str(screenshots_dir / frame_image_path), cv2.IMREAD_GRAYSCALE)
     gray_frame = numpy.array(screenshot)

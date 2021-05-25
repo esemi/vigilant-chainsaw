@@ -30,8 +30,6 @@ def tick(screenshot: ScreenShot, state: State) -> Action:
     INIT -> WAITING_FOR_A_RUBBER -> WAITING_FOR_A_NIBBLE -> HOOKING_THE_FISH ->> INIT -> ...
 
     """
-    logging.info('tick %d %s', state.current_tick, state)
-
     show_current_frame(state, screenshot, 'init screen')
 
     color_frame = numpy.array(screenshot)
@@ -54,7 +52,7 @@ def tick(screenshot: ScreenShot, state: State) -> Action:
         nibble_tick_counter = state.fetch_meta('nibble_tick_counter', 0)
         bobber_area = state.fetch_meta('bobber_area')
         move_to_next_action = _wait_for_nibble_action(state, gray_frame, bobber_area)
-        logging.info(f'{move_to_next_action=}')
+        logging.debug('move_to_next_action=%s', move_to_next_action)
 
         if move_to_next_action:
             state.reset()
@@ -93,9 +91,9 @@ def locations_to_areas(locations: ndarray, template: Point) -> List[Area]:
     ]
 
 
-def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message: str):
+def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message: str, force: bool = False):
     global DEBUG_FRAMES_COUNTER
-    if not state.debug:
+    if not state.debug and not force:
         return
 
     DEBUG_FRAMES_COUNTER += 1
@@ -108,19 +106,19 @@ def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message:
     else:
         cv2.imwrite(filepath, frame)
 
-    logging.debug(f'screenshot saved to {filepath=}: {message}')
+    logging.debug('screenshot saved to %s: %s', filepath, message)
 
 
 def _init_action(state: State, gray_frame: ndarray):
     # ищем персонажа
     character_coords = _search_character(state, gray_frame)
-    logging.info(f'found character coords {character_coords}')
+    logging.debug('found character coords %s', character_coords)
     assert character_coords, 'Character not found'
     character_point = character_coords[0]
 
     # ищем воду
     water_coords = _search_water_cell(state, gray_frame)
-    logging.info(f'found water cell coords {len(water_coords)}')
+    logging.debug('found water cell coords %d', len(water_coords))
     assert water_coords, 'Water cells not found'
 
     # select nearest water cell
@@ -129,18 +127,18 @@ def _init_action(state: State, gray_frame: ndarray):
         water_coords,
     ))
     assert available_water_cells, 'Not found available water cells for fishing'
-    logging.info(f'filtering available cell for fishing {len(available_water_cells)}')
+    logging.debug('filtering available cell for fishing %d', len(available_water_cells))
     for point in available_water_cells:
         mark_point(gray_frame, point)
     show_current_frame(state, gray_frame, 'available water cells')
 
     fishing_cell = random.choice(available_water_cells)
-    logging.info(f'select cell for click {fishing_cell}')
+    logging.debug('select cell for click %s', fishing_cell)
 
     # левый клик
     mouse_move_to(fishing_cell)
     left_click(settings.FISHING_CLICK_DURATION)
-    mouse_move_to(Point(x=fishing_cell.x + 24, y=fishing_cell.y + 11))
+    mouse_move_to(Point(x=fishing_cell.x + 141, y=fishing_cell.y + 78))
 
     # Поплавок может появиться не сразу после заброса удочки, потому ждём какое то время для поиска.
     time.sleep(settings.FISHING_BOBBER_SEARCH_DELAY)
@@ -151,26 +149,23 @@ def _init_action(state: State, gray_frame: ndarray):
 def _wait_for_bobber_action(state: State, gray_frame: ndarray) -> Area:
     # ищем персонажа
     character_coords = _search_character(state, gray_frame)
-    logging.info(f'found character coords {character_coords}')
+    logging.debug('found character coords %s', character_coords)
     assert character_coords, 'Character not found'
     character_point = character_coords[0]
 
     # ищем поплавок
     bobber_areas = _search_bobber(state, gray_frame, character_point)
-    logging.info(f'found bobbers {bobber_areas=}')
+    logging.debug('found bobbers %s', bobber_areas)
     assert bobber_areas, 'Not found bobber'
     return bobber_areas[0]
 
 
 def _wait_for_nibble_action(state: State, gray_frame: ndarray, bobber_area: Area) -> bool:
-    # расширяем зону поиска попловка на который клюнула рыба
-    search_area = bobber_area.expand(settings.FISHING_BOBBER_SEARCH_ZONE_OFFSET, settings.FISHING_BOBBER_SEARCH_ZONE_OFFSET)
-    logging.debug(f'{search_area=}')
-
     # ищем поплавок в подводном положении в заданой области экрана
-    need_hooking_the_fish = _looking_for_nibbles(state, gray_frame, search_area)
-    logging.info(f'{need_hooking_the_fish=}')
+    need_hooking_the_fish = _looking_for_nibbles(state, gray_frame, bobber_area)
+    logging.debug('need_hooking_the_fish=%s', need_hooking_the_fish)
     if need_hooking_the_fish:
+        mouse_move_to(bobber_area.from_point, 0.0)
         left_click(settings.FISHING_CLICK_DURATION)
 
     return need_hooking_the_fish
@@ -237,7 +232,7 @@ def _search_bobber(state: State, gray_frame: ndarray, character_point: Point) ->
     tpl_point = Point(x=tpl_width, y=tpl_height)
 
     res = cv2.matchTemplate(gray_frame, tpl, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= 0.6)
+    loc = np.where(res >= 0.55)
 
     tmp_frame = copy.deepcopy(gray_frame)
     areas = locations_to_areas(loc, tpl_point)
@@ -247,7 +242,7 @@ def _search_bobber(state: State, gray_frame: ndarray, character_point: Point) ->
 
     # выбираем ближайший к нам поплавок
     nearest_areas = sorted(areas, key=lambda x: x.center_point.distance(character_point))
-    logging.debug(f'rubbers by distance from character {nearest_areas=}')
+    logging.debug('rubbers by distance from character %s', nearest_areas)
     show_current_frame(state, tmp_frame, 'filter nearest bobber')
 
     return nearest_areas
@@ -255,8 +250,6 @@ def _search_bobber(state: State, gray_frame: ndarray, character_point: Point) ->
 
 def _looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area = None) -> bool:
     """Определяем, клюёт ли в данный момент."""
-
-    show_current_frame(state, gray_frame, 'search nibbles')
 
     if search_area:
         # crop frame to search_area
@@ -266,12 +259,7 @@ def _looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area = 
 
     processed_image = cv2.Canny(gray_frame, threshold1=100, threshold2=10)
     show_current_frame(state, processed_image, 'search nibbles Canny')
-
-    mean = np.mean(processed_image)
-    median = np.median(processed_image)
-    count_non_black_pixels = np.sum(processed_image > 0)
     black_white = np.sum(processed_image > 0) / np.sum(processed_image == 0)
+    logging.info('black and white: %s', black_white)
 
-    print(f'np {median=} {mean=} {count_non_black_pixels=} {black_white=}')
-    logging.debug(f'looking for nibbles params {median=} {mean=} {count_non_black_pixels=} {black_white=}')
-    return black_white >= 0.22
+    return black_white >= settings.FISHING_NIBBLES_THRESHOLD

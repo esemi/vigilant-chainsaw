@@ -36,7 +36,7 @@ class Area:
 
 
 def mouse_move_to(point: Point, duration: float = 0.6):
-    logging.debug(f'mouse move {point=}')
+    logging.debug('mouse move %s', point)
     pyautogui.moveTo(point.x, point.y, duration=duration, tween=pyautogui.easeOutQuad)
     logging.debug('mouse moved')
 
