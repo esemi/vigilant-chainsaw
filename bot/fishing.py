@@ -1,4 +1,4 @@
-import copy
+import copy  # noqa
 import logging
 import random
 import time
@@ -61,7 +61,8 @@ def tick(screenshot: ScreenShot, state: State) -> Action:
             return state.set_next_action(Action.HOOKING_THE_FISH)
 
         else:
-            assert nibble_tick_counter <= settings.FISHING_MAX_NIBBLE_WAIT_TICKS, f'Wait nibble timeout {nibble_tick_counter=}'
+            assert nibble_tick_counter <= settings.FISHING_MAX_NIBBLE_WAIT_TICKS, ('Wait nibble timeout '
+                                                                                   f'{nibble_tick_counter=}')
             state.put_meta('nibble_tick_counter', nibble_tick_counter + 1)
             return state.set_next_action(state.action)
 
@@ -259,9 +260,10 @@ def _looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area = 
 
     if search_area:
         # crop frame to search_area
-        gray_frame = gray_frame[search_area.from_point.y:search_area.to_point.y, search_area.from_point.x:search_area.to_point.x]
+        from_, to = search_area.from_point, search_area.to_point
+        gray_frame = gray_frame[from_.y:to.y, from_.x:to.x]
         show_current_frame(state, gray_frame, 'search nibbles area')
-    
+
     processed_image = cv2.Canny(gray_frame, threshold1=100, threshold2=10)
     show_current_frame(state, processed_image, 'search nibbles Canny')
 

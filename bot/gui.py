@@ -1,4 +1,4 @@
-import logging
+import logging  # noqa
 import math
 from dataclasses import dataclass
 from typing import Tuple
@@ -47,4 +47,3 @@ def left_click(duration: float):
     pyautogui.sleep(duration)
     pyautogui.mouseUp(button=pyautogui.LEFT)
     logging.debug('click end')
-

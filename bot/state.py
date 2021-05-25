@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 from enum import auto, Enum
 from typing import Any
@@ -34,9 +33,7 @@ class State:
 
     def put_meta(self, key_: str, value: Any):
         self._meta[key_] = value
-        logging.debug(f'put meta {key_} = {value=}')
 
     def fetch_meta(self, key_: str, default: Any = None) -> Any:
         value = self._meta.get(key_, default)
-        logging.debug(f'pop meta {key_} = {value=}')
         return value

@@ -1,5 +1,4 @@
 import copy
-import logging
 from pathlib import Path
 
 import cv2
