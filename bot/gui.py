@@ -1,15 +1,17 @@
-import logging  # noqa
+"""Методы и объекты для работы с GUI пользователя."""
+
+import logging
 import math
 from dataclasses import dataclass
-from typing import Tuple
+from typing import List, Tuple
 
 import pyautogui
 
 
 @dataclass
-class Point:
-    x: int
-    y: int
+class Point(object):
+    x: int  # noqa: WPS111
+    y: int  # noqa: WPS111
 
     @property
     def coords(self) -> Tuple[int, int]:
@@ -20,19 +22,24 @@ class Point:
 
 
 @dataclass
-class Area:
+class Area(object):
     from_point: Point
     to_point: Point
 
     @property
     def center_point(self) -> Point:
-        return Point(x=(self.to_point.x - self.from_point.x) / 2, y=(self.to_point.y - self.from_point.y) / 2)
+        point_x = (self.to_point.x - self.from_point.x) / 2
+        point_y = (self.to_point.y - self.from_point.y) / 2
+        return Point(x=point_x, y=point_y)
 
-    def expand(self, x_offset: int, y_offset: int) -> 'Area':
-        return Area(
-            from_point=Point(x=max(0, self.from_point.x - x_offset), y=max(0, self.from_point.y - y_offset)),
-            to_point=Point(x=self.to_point.x + x_offset, y=self.to_point.y + y_offset),
-        )
+    def astuple(self) -> Tuple[Point, Point]:
+        return self.from_point, self.to_point
+
+
+def sort_areas_by_distance(areas: List[Area], target: Point) -> List[Area]:
+    sorted_areas = sorted(areas, key=lambda area: area.center_point.distance(target))
+    logging.debug('rubbers by distance from character %s', sorted_areas)
+    return sorted_areas
 
 
 def mouse_move_to(point: Point, duration: float = 0.6):

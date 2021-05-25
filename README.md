@@ -18,10 +18,9 @@ $ poetry run pytest -ra -v --cov=bot  tests
 ```
 
 ## TODO
-- requirements cleaning
-- fishing bot
 - CI + linters
+- fishing bot
 - unittests
-- readme
+- readme runner
+- select water cell only once
 - sigint handler
-- clustering for water cells

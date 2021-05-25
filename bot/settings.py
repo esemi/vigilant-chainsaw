@@ -1,7 +1,10 @@
+"""Настройки приложения."""
+
 from pathlib import Path
 
 # максимальное растояние для удочки
-FISHING_DISTANCE = 150.0
+FISHING_DISTANCE_MAX = 200.0
+FISHING_DISTANCE_MIN = 80.0
 
 # сколько времени жмём на кнопку для заброски крючка в воду при рыбалке
 FISHING_CLICK_DURATION = 0.5
@@ -17,8 +20,12 @@ FISHING_BOBBER_SEARCH_ZONE_OFFSET = 20
 
 # Порог чувствительности попловка при клёве.
 # Чем выше - тем больше ряби на воде требуется для тригера на подсекание рыбки
-FISHING_NIBBLES_THRESHOLD = 0.20
+FISHING_NIBBLES_THRESHOLD = 0.2
 
-TMP_FOLDER = Path('/tmp/fishing-bot')
+TMP_FOLDER = Path('/tmp/fishing-bot')  # noqa: S108
 if not TMP_FOLDER.exists():
     TMP_FOLDER.mkdir(exist_ok=True)
+
+TEMPLATES_FOLDER = Path(__file__).parent.joinpath('../data/templates')
+if not TEMPLATES_FOLDER.exists():
+    TEMPLATES_FOLDER.mkdir(exist_ok=True)

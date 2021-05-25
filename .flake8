@@ -3,15 +3,25 @@ line_length = 125
 
 [flake8]
 max-line-length = 125
+max-module-members = 8
 
 ignore =
     S101, # assert
+    S311, # Standard pseudo-random generators are not suitable for security/cryptographic purposes.
 
-    D100, # Missing docstring in public module
     D101, # Missing docstring in public class
     D102, # Missing docstring in public method
     D103, # Missing docstring in public function
     D104, # Missing docstring in public package
+    D105, # Missing docstring in magic method
+    D107, # Missing docstring in __init__
+
+
+    WPS115, # Found upper-case constant in a class
+    WPS323, # Found `%` string formatting
+    WPS600, # Found subclassing a builtin
+
+    I001,
 
     DAR101, # Missing parameter(s) in Docstring
     DAR201, # Missing "Returns" in Docstring
