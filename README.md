@@ -12,11 +12,13 @@ $ python3.9 -m venv venv
 $ source venv/bin/activate
 $ pip install poetry
 $ poetry install
-$ poetry run pytest
+$ poetry run pytest -ra -v --cov=bot  tests
+
 
 ```
 
 ## TODO
+- requirements cleaning
 - fishing bot
 - CI + linters
 - unittests
