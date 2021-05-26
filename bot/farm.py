@@ -7,8 +7,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional
 
-import mss
-from mss.models import Monitor
+from mss import models, mss  # type: ignore
 
 from bot.fishing.main import tick as fishing
 from bot.state import State
@@ -19,12 +18,12 @@ class Resources(int, Enum):
     FISH = auto()
 
 
-def select_monitor(sct) -> Monitor:
+def select_monitor(sct) -> models.Monitor:
     return sct.monitors[-1]
 
 
 def _farming_strategy(max_tick: Optional[int], state: State, counter: Counter, resource: Resources):
-    with mss.mss() as sct:
+    with mss() as sct:
         while max_tick is None or state.current_tick < max_tick:
             state.current_tick += 1
             counter['last_tick'] = state.current_tick
@@ -40,15 +39,15 @@ def _farming_strategy(max_tick: Optional[int], state: State, counter: Counter, r
                 raise NotImplementedError()
 
 
-def farm_bot(resource: Resources, debug_mode: bool = False, max_tick: Optional[int] = 5, start_delay: int = 5) -> Counter:
-    counter = Counter()
+def farm_bot(resource: Resources, debug_mode: bool = False, tick_limit: Optional[int] = 5, start_delay: int = 5) -> Counter:
+    counter: Counter = Counter()
     state = State(debug=debug_mode)
-    logging.info('farm bot on %s %s %s', max_tick, start_delay, resource)
+    logging.info('farm bot on %s %s %s', tick_limit, start_delay, resource)
     time.sleep(start_delay)
 
     start_time = time.time()
     try:
-        _farming_strategy(max_tick, state, counter, resource)
+        _farming_strategy(tick_limit, state, counter, resource)
     except Exception as exc:
         logging.exception('exception captured', exc_info=exc)
     finally:
@@ -60,8 +59,8 @@ def farm_bot(resource: Resources, debug_mode: bool = False, max_tick: Optional[i
 if __name__ == '__main__':
     # todo click parse cli options
     debug = True
-    max_tick = 1
+    tick_limit = 1
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, max_tick=max_tick, start_delay=5)
+    cnt = farm_bot(Resources.FISH, debug_mode=debug, tick_limit=tick_limit, start_delay=5)
     logging.info(cnt)

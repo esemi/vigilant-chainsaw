@@ -3,7 +3,7 @@
 import copy
 from pathlib import Path
 
-import cv2
+import cv2  # type: ignore
 from numpy import ndarray
 
 from bot import settings

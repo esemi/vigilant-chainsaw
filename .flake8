@@ -25,3 +25,4 @@ ignore =
 
     DAR101, # Missing parameter(s) in Docstring
     DAR201, # Missing "Returns" in Docstring
+    DAR401, # Missing exception(s) in Raises section

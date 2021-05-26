@@ -18,10 +18,20 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.1.6
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Install package
+      run: |
+        poetry --version
+        poetry install
+
     - name: Run MyPy
       run: |
-        pip install mypy
-        mypy bot/
+        poetry run mypy bot/
 
     - name: wemake-python-styleguide
       uses: wemake-services/wemake-python-styleguide@0.15.2

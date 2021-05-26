@@ -1,8 +1,8 @@
 """Верхнеуровневая реализцация бота."""
 
-import cv2
+import cv2  # type: ignore
 import numpy
-from mss.screenshot import ScreenShot
+from mss.screenshot import ScreenShot  # type: ignore
 
 from bot import settings
 from bot.fishing import actions, cv_helpers
@@ -32,6 +32,7 @@ def tick(screenshot: ScreenShot, state: State) -> Action:  # noqa: WPS231; WPS22
 
     if state.action == Action.START_FISHING:
         # забрасываем удочку
+        assert state.meta.target_point
         actions.start_fishing_action(state, gray_frame, state.meta.target_point)
         return state.set_next_action(Action.WAITING_FOR_A_BOBBER)
 
@@ -44,6 +45,7 @@ def tick(screenshot: ScreenShot, state: State) -> Action:  # noqa: WPS231; WPS22
 
     if state.action == Action.WAITING_FOR_A_NIBBLE:
         # ждём клёва
+        assert state.meta.bobber_area
         move_to_next_action = actions.wait_for_nibble_action(
             state,
             gray_frame,
@@ -58,3 +60,5 @@ def tick(screenshot: ScreenShot, state: State) -> Action:  # noqa: WPS231; WPS22
         # подсекаем рыбу
         actions.hooking_the_fish_action(state, gray_frame)
         return state.set_next_action(Action.START_FISHING)
+
+    raise NotImplementedError()

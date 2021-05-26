@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import List
 
-import cv2
+import cv2  # type: ignore
 from numpy import ndarray
 
 from bot.gui import Area, Point

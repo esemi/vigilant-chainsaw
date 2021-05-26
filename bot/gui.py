@@ -5,7 +5,7 @@ import math
 from dataclasses import dataclass
 from typing import List, Tuple
 
-import pyautogui
+import pyautogui  # type: ignore
 
 
 @dataclass
@@ -30,7 +30,7 @@ class Area(object):
     def center_point(self) -> Point:
         point_x = (self.to_point.x - self.from_point.x) / 2
         point_y = (self.to_point.y - self.from_point.y) / 2
-        return Point(x=point_x, y=point_y)
+        return Point(x=int(point_x), y=int(point_y))
 
     def astuple(self) -> Tuple[Point, Point]:
         return self.from_point, self.to_point
