@@ -59,8 +59,8 @@ def farm_bot(resource: Resources, debug_mode: bool = False, max_tick: Optional[i
 
 if __name__ == '__main__':
     # todo click parse cli options
-    debug = False
-    max_tick = 10
+    debug = True
+    max_tick = 1
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
     cnt = farm_bot(Resources.FISH, debug_mode=debug, max_tick=max_tick, start_delay=5)

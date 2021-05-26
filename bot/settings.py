@@ -1,5 +1,5 @@
 """Настройки приложения."""
-
+import tempfile
 from pathlib import Path
 
 # максимальное растояние для удочки
@@ -22,7 +22,7 @@ FISHING_BOBBER_SEARCH_ZONE_OFFSET = 20
 # Чем выше - тем больше ряби на воде требуется для тригера на подсекание рыбки
 FISHING_NIBBLES_THRESHOLD = 0.2
 
-TMP_FOLDER = Path('/tmp/fishing-bot')  # noqa: S108
+TMP_FOLDER = Path(tempfile.gettempdir()).joinpath('fishing-bot')  # noqa: S108
 if not TMP_FOLDER.exists():
     TMP_FOLDER.mkdir(exist_ok=True)
 
