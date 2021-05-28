@@ -70,9 +70,30 @@ def wait_for_nibble_action(state: State, gray_frame: ndarray, bobber_area: Area)
     return need_hooking_the_fish
 
 
-def hooking_the_fish_action(state: State, gray_frame: ndarray) -> bool:
-    # todo ищем поплавок-ползунок
-    # todo кликаем если отклонился от середины влево
-    # todo некликаем если отклонился от середины вправо
-    # todo ждём пока он пропадёт
-    raise NotImplementedError()
+def wait_for_hooking_game_action(state: State, gray_frame: ndarray) -> Area:
+    # ищем поплавок-ползунок
+    game_area = cv_helpers.lookup_hooking_game_area(state, gray_frame)
+    logging.debug('found mini-game area %s', game_area)
+    assert game_area, 'Not found game area'
+    return game_area[0]
+
+
+def hooking_the_fish_action(state: State, gray_frame: ndarray, game_line: Area) -> bool:
+    # определяем местоположение поплавка в миниигре
+    bobbers = cv_helpers.search_bobber_in_game(state, gray_frame)
+    logging.debug('found bobber in game %s', bobbers)
+
+    if bobbers:
+        logging.info('hooking fish bobber{x}=%s; game_area{x}=%s', bobbers[0].x, game_line.center_point.x)
+        # cv_helpers.show_current_frame(state, gray_frame, 'hooking_the_fish_action', True)  # todo rm
+
+        if bobbers[0].x < game_line.center_point.x:
+            # кликаем если отклонился от середины влево
+            left_click(settings.FISHING_HOOKING_CLICK_DURATION)
+            logging.info('hooking fish click')
+    else:
+        time.sleep(settings.FISHING_BOBBER_SEARCH_DELAY)
+
+    # не кликаем если отклонился от середины вправо
+    # ждём пока он пропадёт
+    return not bobbers

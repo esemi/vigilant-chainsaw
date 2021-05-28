@@ -5,12 +5,12 @@ import time
 from collections import Counter
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Optional
+from typing import Callable, Optional
 
 from mss import models, mss  # type: ignore
 
-from bot.fishing.main import tick as fishing
-from bot.state import State
+from bot.fishing import main as fishing
+from bot.state import Action, State
 
 
 @dataclass
@@ -22,7 +22,7 @@ def select_monitor(sct) -> models.Monitor:
     return sct.monitors[-1]
 
 
-def _farming_strategy(max_tick: Optional[int], state: State, counter: Counter, resource: Resources):
+def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: State, counter: Counter, auto_restart: bool):
     with mss() as sct:
         while max_tick is None or state.current_tick < max_tick:
             state.current_tick += 1
@@ -31,23 +31,44 @@ def _farming_strategy(max_tick: Optional[int], state: State, counter: Counter, r
             monitor = select_monitor(sct)
             screenshot = sct.grab(monitor)
 
-            if resource is Resources.FISH:
-                logging.info('tick %s', state.current_tick)
-                next_action = fishing(screenshot, state)
-                logging.info('tick complete %s', next_action)
-            else:
-                raise NotImplementedError()
+            logging.info('tick %s', state.current_tick)
+            try:
+                next_action = farm_method(screenshot, state)
+
+            except AssertionError as exc:
+                if auto_restart:
+                    logging.error('Restart after error', exc_info=exc)
+                    state.set_next_action(Action.START)
+                else:
+                    raise exc
+            logging.info('tick complete %s', next_action)
 
 
-def farm_bot(resource: Resources, debug_mode: bool = False, tick_limit: Optional[int] = 5, start_delay: int = 5) -> Counter:
+def select_farming_module(resource: Resources) -> Callable:
+    if resource is Resources.FISH:
+        return fishing.tick
+
+    raise NotImplementedError()
+
+
+def farm_bot(
+    resource: Resources,
+    debug_mode: bool = False,
+    tick_limit: Optional[int] = 5,
+    start_delay: int = 5,
+    restart_if_error: bool = False,
+) -> Counter:
     counter: Counter = Counter()
     state = State(debug=debug_mode)
     logging.info('farm bot on %s %s %s', tick_limit, start_delay, resource)
     time.sleep(start_delay)
 
     start_time = time.time()
+
+    farm_method = select_farming_module(resource)
+
     try:
-        _farming_strategy(tick_limit, state, counter, resource)
+        _farming_strategy(farm_method, tick_limit, state, counter, restart_if_error)
     except Exception as exc:
         logging.exception('exception captured', exc_info=exc)
     finally:
@@ -57,10 +78,10 @@ def farm_bot(resource: Resources, debug_mode: bool = False, tick_limit: Optional
 
 
 if __name__ == '__main__':
-    # todo click parse cli options
-    debug = True
-    tick_limit = 1
+    debug = False
+    tick_limit = None
+    ignore_fail = True
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, tick_limit=tick_limit, start_delay=5)
+    cnt = farm_bot(Resources.FISH, debug_mode=debug, tick_limit=tick_limit, start_delay=5, restart_if_error=ignore_fail)
     logging.info(cnt)

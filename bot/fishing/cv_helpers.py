@@ -84,13 +84,30 @@ def search_bobber(state: State, gray_frame: ndarray, character: Point) -> List[A
     return sort_areas_by_distance(areas, character)
 
 
+def lookup_hooking_game_area(state: State, gray_frame: ndarray) -> List[Area]:
+    """Ищем миниигру."""
+    tpl = templates.client.hooking_game_template
+
+    res = cv2.matchTemplate(gray_frame, tpl, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= float(0.6))  # noqa: WPS432
+    areas = cv_operations.locations_to_areas(
+        loc,
+        cv_operations.template_to_point(tpl),
+    )
+
+    cv_operations.mark_area_group(gray_frame, areas)
+    show_current_frame(state, gray_frame, 'lookup game area')
+
+    return areas
+
+
 def looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area) -> bool:
     """Определяем, клюёт ли в данный момент."""
     # crop frame to search_area
     gray_frame = cv_operations.crop_frame(gray_frame, search_area)
     show_current_frame(state, gray_frame, 'search nibbles area')
 
-    processed_image = cv2.Canny(gray_frame, threshold1=100, threshold2=10)
+    processed_image = cv2.Canny(gray_frame, threshold1=35, threshold2=15)  # noqa: WPS432
     show_current_frame(state, processed_image, 'search nibbles Canny')
     black_count = np.sum(processed_image == 0)
     bw_factor = np.count_nonzero(processed_image) / black_count
@@ -99,12 +116,26 @@ def looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area) ->
     return bw_factor >= settings.FISHING_NIBBLES_THRESHOLD
 
 
+def search_bobber_in_game(state: State, gray_frame: ndarray) -> List[Point]:
+    """Ищем поплавок в миниигре."""
+    tpl = templates.client.bobber_in_game_template
+
+    res = cv2.matchTemplate(gray_frame, tpl, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= float(0.6))  # noqa: WPS432
+    return cv_operations.locations_to_center_points(
+        loc,
+        cv_operations.template_to_point(tpl),
+    )
+
+
 def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message: str, force: bool = False):
     global DEBUG_FRAMES_COUNTER  # noqa: WPS420
+
+    DEBUG_FRAMES_COUNTER += 1
+
     if not state.debug and not force:
         return
 
-    DEBUG_FRAMES_COUNTER += 1
     filename = f'frame#{DEBUG_FRAMES_COUNTER}-tick#{state.current_tick}-{message}.png'  # noqa: WPS305
     filepath = str(settings.TMP_FOLDER / filename)
     if isinstance(frame, ScreenShot):
@@ -113,4 +144,4 @@ def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message:
         img.save(filepath)
     else:
         cv2.imwrite(filepath, frame)
-    logging.debug('screenshot saved to %s: %s', str(filepath), message)
+    logging.info('screenshot saved to %s: %s', str(filepath), message)

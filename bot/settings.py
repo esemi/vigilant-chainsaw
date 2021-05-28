@@ -9,6 +9,9 @@ FISHING_DISTANCE_MIN = 80.0
 # сколько времени жмём на кнопку для заброски крючка в воду при рыбалке
 FISHING_CLICK_DURATION = 0.5
 
+# сколько времени жмём на кнопку для подсечки улова
+FISHING_HOOKING_CLICK_DURATION = 2.0
+
 # пауза перед поиском поплавка на воде
 FISHING_BOBBER_SEARCH_DELAY = 2.0
 
@@ -20,7 +23,7 @@ FISHING_BOBBER_SEARCH_ZONE_OFFSET = 20
 
 # Порог чувствительности попловка при клёве.
 # Чем выше - тем больше ряби на воде требуется для тригера на подсекание рыбки
-FISHING_NIBBLES_THRESHOLD = 0.2
+FISHING_NIBBLES_THRESHOLD = 0.27
 
 TMP_FOLDER = Path(tempfile.gettempdir()).joinpath('fishing-bot')  # noqa: S108
 if not TMP_FOLDER.exists():

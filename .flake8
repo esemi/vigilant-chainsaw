@@ -4,6 +4,7 @@ line_length = 125
 [flake8]
 max-line-length = 125
 max-module-members = 8
+max-returns = 6
 
 ignore =
     S101, # assert

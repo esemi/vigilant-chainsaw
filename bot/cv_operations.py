@@ -24,7 +24,7 @@ def mark_point_group(frame: ndarray, points: List[Point], color: Color = Color.B
         cv2.circle(frame, point.coords, radius=5, color=color.value, thickness=2)
 
 
-def locations_to_points(locations: ndarray) -> List[Point]:
+def _locations_to_points(locations: ndarray) -> List[Point]:
     return [
         Point(x=from_x, y=from_y)
         for from_x, from_y in zip(*locations[::-1])
@@ -36,7 +36,7 @@ def locations_to_center_points(locations: ndarray, template: Point) -> List[Poin
         Point(
             x=from_point.x + int(template.x / 2),
             y=from_point.y + int(template.y / 2),
-        ) for from_point in locations_to_points(locations)
+        ) for from_point in _locations_to_points(locations)
     ]
 
 
@@ -49,7 +49,7 @@ def locations_to_areas(locations: ndarray, template: Point) -> List[Area]:
                 y=from_point.y + template.y,
             ),
         )
-        for from_point in locations_to_points(locations)
+        for from_point in _locations_to_points(locations)
     ]
 
 

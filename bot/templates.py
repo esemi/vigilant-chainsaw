@@ -14,6 +14,8 @@ class Templates(object):
         self._water = cv2.imread(str(folder / 'water.png'), cv2.IMREAD_GRAYSCALE)
         self._character = cv2.imread(str(folder / 'character.png'), cv2.IMREAD_GRAYSCALE)
         self._bobber = cv2.imread(str(folder / 'bobber.png'), cv2.IMREAD_GRAYSCALE)
+        self._hooking_game = cv2.imread(str(folder / 'hooking_game.png'), cv2.IMREAD_GRAYSCALE)
+        self._bobber_in_game = cv2.imread(str(folder / 'bobber_in_game.png'), cv2.IMREAD_GRAYSCALE)
 
     @property
     def water_template(self) -> ndarray:
@@ -29,6 +31,16 @@ class Templates(object):
     def bobber_template(self) -> ndarray:
         """Шаблон клетки поплавком в надводном положении."""
         return copy.deepcopy(self._bobber)
+
+    @property
+    def hooking_game_template(self) -> ndarray:
+        """Шаблон миниигры рыбалки."""
+        return copy.deepcopy(self._hooking_game)
+
+    @property
+    def bobber_in_game_template(self) -> ndarray:
+        """Шаблон поплавка в миниигре."""
+        return copy.deepcopy(self._bobber_in_game)
 
 
 client = Templates(settings.TEMPLATES_FOLDER)

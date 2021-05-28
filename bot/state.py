@@ -9,9 +9,10 @@ from bot.gui import Area, Point
 
 class Action(IntEnum):
     INIT = auto()
-    START_FISHING = auto()
+    START = auto()
     WAITING_FOR_A_BOBBER = auto()
     WAITING_FOR_A_NIBBLE = auto()
+    WAITING_FOR_A_HOOKING_GAME = auto()
     HOOKING_THE_FISH = auto()
 
 
@@ -19,6 +20,7 @@ class Action(IntEnum):
 class MetaInfo(object):
     target_point: Optional[Point] = None
     bobber_area: Optional[Area] = None
+    game_area: Optional[Area] = None
     nibble_tick_counter: int = 0
 
 

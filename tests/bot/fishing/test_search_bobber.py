@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import cv2
 import numpy
 import pytest
@@ -7,12 +5,12 @@ import pytest
 from bot.fishing.cv_helpers import search_bobber
 from bot.gui import Point
 from bot.state import State
+from tests.bot.fishing.conftest import bobber_templates, nibbles_templates
 
 
-@pytest.mark.parametrize('frame_image_path', ['bobber_1.png', 'bobber_2.png'])
-def test_search_bobber_happy_path(screenshots_dir: Path, fixture_farm_state: State,
-                                  frame_image_path: str):
-    screenshot = cv2.imread(str(screenshots_dir / frame_image_path), cv2.IMREAD_GRAYSCALE)
+@pytest.mark.parametrize('filepath', bobber_templates())
+def test_search_bobber_happy_path(fixture_farm_state: State, filepath: str):
+    screenshot = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
     gray_frame = numpy.array(screenshot)
 
     res = search_bobber(fixture_farm_state, gray_frame, Point(x=0, y=0))
@@ -20,10 +18,9 @@ def test_search_bobber_happy_path(screenshots_dir: Path, fixture_farm_state: Sta
     assert len(res) > 0
 
 
-@pytest.mark.parametrize('frame_image_path', ['nibble_1.png', 'nibble_2.png', 'nibble_3.png', 'nibble_4.png'])
-def test_search_bobber_false_positive(screenshots_dir: Path, fixture_farm_state: State,
-                                      frame_image_path: str):
-    screenshot = cv2.imread(str(screenshots_dir / frame_image_path), cv2.IMREAD_GRAYSCALE)
+@pytest.mark.parametrize('filepath', nibbles_templates())
+def test_search_bobber_false_positive(fixture_farm_state: State, filepath: str):
+    screenshot = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
     gray_frame = numpy.array(screenshot)
 
     res = search_bobber(fixture_farm_state, gray_frame, Point(x=0, y=0))

@@ -74,6 +74,17 @@ optional = false
 python-versions = ">=3.6,<4.0"
 
 [[package]]
+name = "decopatch"
+version = "1.4.8"
+description = "Create decorators easily in python."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+makefun = ">=1.5.0"
+
+[[package]]
 name = "docutils"
 version = "0.17.1"
 description = "Docutils -- Python Documentation Utilities"
@@ -305,6 +316,14 @@ python-versions = ">=3.6,<4.0"
 pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
 requirements_deprecated_finder = ["pipreqs", "pip-api"]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
+
+[[package]]
+name = "makefun"
+version = "1.11.3"
+description = "Small library to dynamically create python functions."
+category = "dev"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "mccabe"
@@ -2331,6 +2350,18 @@ toml = "*"
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
+name = "pytest-cases"
+version = "3.5.2"
+description = "Separate test code from test cases in pytest."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+decopatch = "*"
+makefun = ">=1.9.5"
+
+[[package]]
 name = "pytest-cov"
 version = "2.12.0"
 description = "Pytest plugin for measuring coverage."
@@ -2344,6 +2375,20 @@ pytest = ">=4.6"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests (==2.0.2)", "six", "pytest-xdist", "virtualenv"]
+
+[[package]]
+name = "pytest-mock"
+version = "3.6.1"
+description = "Thin-wrapper around the mock package for easier use with pytest"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pytest = ">=5.0"
+
+[package.extras]
+dev = ["pre-commit", "tox", "pytest-asyncio"]
 
 [[package]]
 name = "python3-xlib"
@@ -2492,7 +2537,7 @@ typing_extensions = ">=3.6,<4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "d421c89d5b138b3474675eb0e13ddf4d58b4e69ae73a54cfde322765319f78c0"
+content-hash = "ae4059584c7f1f0e2f82a3d3a4e729767c48f2f5023a83e96971e2a872cb3046"
 
 [metadata.files]
 astor = [
@@ -2573,6 +2618,10 @@ darglint = [
     {file = "darglint-1.8.0-py3-none-any.whl", hash = "sha256:ac6797bcc918cd8d8f14c168a4a364f54e1aeb4ced59db58e7e4c6dfec2fe15c"},
     {file = "darglint-1.8.0.tar.gz", hash = "sha256:aa605ef47817a6d14797d32b390466edab621768ea4ca5cc0f3c54f6d8dcaec8"},
 ]
+decopatch = [
+    {file = "decopatch-1.4.8-py2.py3-none-any.whl", hash = "sha256:29a74d5d753423b188d5b537532da4f4b88e33ddccb95a8a20a5eff5b13265d4"},
+    {file = "decopatch-1.4.8.tar.gz", hash = "sha256:c66b0815f15db04de7bb52b0b276432b76b7346fe7046f28033f48a14340d144"},
+]
 docutils = [
     {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},
     {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
@@ -2648,6 +2697,10 @@ iniconfig = [
 isort = [
     {file = "isort-5.8.0-py3-none-any.whl", hash = "sha256:2bb1680aad211e3c9944dbce1d4ba09a989f04e238296c87fe2139faa26d655d"},
     {file = "isort-5.8.0.tar.gz", hash = "sha256:0a943902919f65c5684ac4e0154b1ad4fac6dcaa5d9f3426b732f1c8b5419be6"},
+]
+makefun = [
+    {file = "makefun-1.11.3-py2.py3-none-any.whl", hash = "sha256:a19bddf07efb6bf92e3ccde5d593e49bc59001fd6c17cf7301d7a73a2647ae83"},
+    {file = "makefun-1.11.3.tar.gz", hash = "sha256:033eed65e2c1804fca84161a38d1fc8bb8650d32a89ac1c5dc7e54b2b2c2e88c"},
 ]
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
@@ -3465,9 +3518,17 @@ pytest = [
     {file = "pytest-6.2.4-py3-none-any.whl", hash = "sha256:91ef2131a9bd6be8f76f1f08eac5c5317221d6ad1e143ae03894b862e8976890"},
     {file = "pytest-6.2.4.tar.gz", hash = "sha256:50bcad0a0b9c5a72c8e4e7c9855a3ad496ca6a881a3641b4260605450772c54b"},
 ]
+pytest-cases = [
+    {file = "pytest-cases-3.5.2.tar.gz", hash = "sha256:54d150864bf48081f4012c4caec92d4d89dfb28d1e7c1a57722f7fd0e676605e"},
+    {file = "pytest_cases-3.5.2-py2.py3-none-any.whl", hash = "sha256:7cec472798c10b6bacdd94821973e22bac84f30b9cc5b6c5202d4e48e9b121f4"},
+]
 pytest-cov = [
     {file = "pytest-cov-2.12.0.tar.gz", hash = "sha256:8535764137fecce504a49c2b742288e3d34bc09eed298ad65963616cc98fd45e"},
     {file = "pytest_cov-2.12.0-py2.py3-none-any.whl", hash = "sha256:95d4933dcbbacfa377bb60b29801daa30d90c33981ab2a79e9ab4452c165066e"},
+]
+pytest-mock = [
+    {file = "pytest-mock-3.6.1.tar.gz", hash = "sha256:40217a058c52a63f1042f0784f62009e976ba824c418cced42e88d5f40ab0e62"},
+    {file = "pytest_mock-3.6.1-py3-none-any.whl", hash = "sha256:30c2f2cc9759e76eee674b81ea28c9f0b94f8f0445a1b87762cadf774f0df7e3"},
 ]
 python3-xlib = [
     {file = "python3-xlib-0.15.tar.gz", hash = "sha256:dc4245f3ae4aa5949c1d112ee4723901ade37a96721ba9645f2bfa56e5b383f8"},

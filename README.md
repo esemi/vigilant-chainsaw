@@ -21,6 +21,7 @@ $ poetry run pytest -ra -v --cov=bot  tests
 
 ## TODO
 - fishing bot
+- parse cli args
 - unittests
 - readme runner
 - select water cell only once

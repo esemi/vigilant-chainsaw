@@ -33,7 +33,6 @@ jobs:
       run: |
         poetry run mypy bot/
 
-    - name: wemake-python-styleguide
-      uses: wemake-services/wemake-python-styleguide@0.15.2
-      with:
-        path: './bot'
+    - name: Run wemake-python-styleguide
+      run: |
+        poetry run flake8 bot

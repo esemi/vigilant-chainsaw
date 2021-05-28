@@ -28,9 +28,19 @@ class Area(object):
 
     @property
     def center_point(self) -> Point:
-        point_x = (self.to_point.x - self.from_point.x) / 2
-        point_y = (self.to_point.y - self.from_point.y) / 2
-        return Point(x=int(point_x), y=int(point_y))
+        half_size_x = math.floor(self.size.x / 2)
+        half_size_y = math.floor(self.size.y / 2)
+        return Point(
+            self.from_point.x + half_size_x,
+            self.from_point.y + half_size_y,
+        )
+
+    @property
+    def size(self) -> Point:
+        return Point(
+            self.to_point.x - self.from_point.x,
+            self.to_point.y - self.from_point.y,
+        )
 
     def astuple(self) -> Tuple[Point, Point]:
         return self.from_point, self.to_point
