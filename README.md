@@ -6,6 +6,7 @@
 
 ## Project local running
 
+### install
 ```bash
 $ git clone PATH
 
@@ -14,16 +15,34 @@ $ python3.9 -m venv venv
 $ source venv/bin/activate
 $ pip install poetry
 $ poetry install
-$ poetry run mypy bot/
-$ poetry run pytest -ra -v --cov=bot  tests
-
 ```
 
+### run tests
+```bash
+$ poetry run mypy bot/
+$ poetry run pytest -ra -v --cov=bot  tests
+```
+
+### run fishing
+```bash
+$ poetry run TODO
+```
+
+
 ## TODO
-- fishing bot
-- parse cli args
-- unittests
+
+### common
 - readme runner
 - select water cell only once
-- deploy to pypi + badge
+- deploy to pypi & badges
 - sigint handler
+
+### fishing bot
+- parse cli args
+- change algo for looking_for_nibbles method
+
+### harvesting bot
+- prototype
+- search resources by args
+- select random cell for hravest
+- harvest and retry
