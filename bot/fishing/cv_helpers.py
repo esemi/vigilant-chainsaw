@@ -3,7 +3,7 @@
 import copy
 import logging
 import random
-from typing import List, Union
+from typing import List
 
 import cv2  # type: ignore
 import numpy as np
@@ -15,11 +15,9 @@ from bot import cv_operations, settings, templates
 from bot.gui import Area, Point, sort_areas_by_distance
 from bot.state import State
 
-DEBUG_FRAMES_COUNTER = 0
-
 
 def search_water_cell(state: State, gray_frame: ndarray) -> List[Point]:
-    show_current_frame(state, gray_frame, 'search water cell')
+    cv_operations.show_current_frame(state, gray_frame, 'search water cell')
 
     tpl = templates.client.water_template
 
@@ -32,7 +30,7 @@ def search_water_cell(state: State, gray_frame: ndarray) -> List[Point]:
     )
     tmp_frame = copy.copy(gray_frame)
     cv_operations.mark_point_group(tmp_frame, center_points)
-    show_current_frame(state, tmp_frame, 'search water cells')
+    cv_operations.show_current_frame(state, tmp_frame, 'search water cells')
 
     return center_points
 
@@ -45,14 +43,14 @@ def choice_cell_for_fishing(state: State, gray_frame: ndarray, character: Point,
     assert available_water_cells, 'Not found available water cells for fishing'
     logging.debug('filtering available cell for fishing %s', len(available_water_cells))
     cv_operations.mark_point_group(gray_frame, available_water_cells)
-    show_current_frame(state, gray_frame, 'choice cell for fishing')
+    cv_operations.show_current_frame(state, gray_frame, 'choice cell for fishing')
 
     return random.choice(available_water_cells)
 
 
 def search_character(state: State, gray_frame: ndarray) -> List[Point]:
     """Ищем координаты персонажа."""
-    show_current_frame(state, gray_frame, 'search character')
+    cv_operations.show_current_frame(state, gray_frame, 'search character')
 
     tpl_point = cv_operations.template_to_point(templates.client.character_template)
 
@@ -61,7 +59,7 @@ def search_character(state: State, gray_frame: ndarray) -> List[Point]:
 
     characters = cv_operations.locations_to_areas(loc, tpl_point)
     cv_operations.mark_area_group(gray_frame, characters)
-    show_current_frame(state, gray_frame, 'search character match')
+    cv_operations.show_current_frame(state, gray_frame, 'search character match')
 
     return cv_operations.locations_to_center_points(loc, tpl_point)
 
@@ -79,7 +77,7 @@ def search_bobber(state: State, gray_frame: ndarray, character: Point) -> List[A
 
     tmp_frame = copy.deepcopy(gray_frame)
     cv_operations.mark_area_group(tmp_frame, areas)
-    show_current_frame(state, tmp_frame, 'search bobber cells')
+    cv_operations.show_current_frame(state, tmp_frame, 'search bobber cells')
 
     return sort_areas_by_distance(areas, character)
 
@@ -96,7 +94,7 @@ def lookup_hooking_game_area(state: State, gray_frame: ndarray) -> List[Area]:
     )
 
     cv_operations.mark_area_group(gray_frame, areas)
-    show_current_frame(state, gray_frame, 'lookup game area')
+    cv_operations.show_current_frame(state, gray_frame, 'lookup game area')
 
     return areas
 
@@ -105,10 +103,10 @@ def looking_for_nibbles(state: State, gray_frame: ndarray, search_area: Area) ->
     """Определяем, клюёт ли в данный момент."""
     # crop frame to search_area
     gray_frame = cv_operations.crop_frame(gray_frame, search_area)
-    show_current_frame(state, gray_frame, 'search nibbles area')
+    cv_operations.show_current_frame(state, gray_frame, 'search nibbles area')
 
     processed_image = cv2.Canny(gray_frame, threshold1=35, threshold2=15)  # noqa: WPS432
-    show_current_frame(state, processed_image, 'search nibbles Canny')
+    cv_operations.show_current_frame(state, processed_image, 'search nibbles Canny')
     black_count = np.sum(processed_image == 0)
     bw_factor = np.count_nonzero(processed_image) / black_count
     logging.info('black vs white factor: %s', bw_factor)
@@ -126,22 +124,3 @@ def search_bobber_in_game(state: State, gray_frame: ndarray) -> List[Point]:
         loc,
         cv_operations.template_to_point(tpl),
     )
-
-
-def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message: str, force: bool = False):
-    global DEBUG_FRAMES_COUNTER  # noqa: WPS420
-
-    DEBUG_FRAMES_COUNTER += 1
-
-    if not state.debug and not force:
-        return
-
-    filename = f'frame#{DEBUG_FRAMES_COUNTER}-tick#{state.current_tick}-{message}.png'  # noqa: WPS305
-    filepath = str(settings.TMP_FOLDER / filename)
-    if isinstance(frame, ScreenShot):
-        img = Image.frombytes('RGB', frame.size, frame.bgra, 'raw', 'BGRX')
-        img.thumbnail((1024, 512))
-        img.save(filepath)
-    else:
-        cv2.imwrite(filepath, frame)
-    logging.info('screenshot saved to %s: %s', str(filepath), message)

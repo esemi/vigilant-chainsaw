@@ -3,19 +3,14 @@
 import logging
 import time
 from collections import Counter
-from dataclasses import dataclass
-from enum import Enum, auto
 from typing import Callable, Optional
 
 from mss import models, mss  # type: ignore
 
 from bot.fishing import main as fishing
+from bot.harvesting import main as harvesting
+from bot.resources import Resources
 from bot.state import Action, State
-
-
-@dataclass
-class Resources(int, Enum):
-    FISH = auto()
 
 
 def select_monitor(sct) -> models.Monitor:
@@ -47,6 +42,9 @@ def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: Sta
 def select_farming_module(resource: Resources) -> Callable:
     if resource is Resources.FISH:
         return fishing.tick
+
+    if resource in [Resources.COTTON, ]:
+        return harvesting.tick
 
     raise NotImplementedError()
 
@@ -83,5 +81,11 @@ if __name__ == '__main__':
     ignore_fail = True
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, tick_limit=tick_limit, start_delay=5, restart_if_error=ignore_fail)
+    cnt = farm_bot(
+        Resources.COTTON,
+        debug_mode=debug,
+        tick_limit=tick_limit,
+        start_delay=5,
+        restart_if_error=ignore_fail,
+    )
     logging.info(cnt)

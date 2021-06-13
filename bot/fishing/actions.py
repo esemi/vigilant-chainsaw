@@ -6,6 +6,7 @@ import time
 
 from numpy import ndarray
 
+import bot.cv_operations
 from bot import settings
 from bot.fishing import cv_helpers
 from bot.gui import Area, Point, left_click, mouse_move_to
@@ -42,7 +43,7 @@ def start_fishing_action(state: State, gray_frame: ndarray, target: Point):
     # Поплавок может появиться не сразу после заброса удочки, потому ждём какое то время для поиска.
     time.sleep(settings.FISHING_BOBBER_SEARCH_DELAY)
 
-    cv_helpers.show_current_frame(state, gray_frame, 'fishing action')
+    bot.cv_operations.show_current_frame(state, gray_frame, 'fishing action')
 
 
 def wait_for_bobber_action(state: State, gray_frame: ndarray) -> Area:
