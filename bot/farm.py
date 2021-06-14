@@ -24,11 +24,11 @@ def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: Sta
             counter['last_tick'] = state.current_tick
 
             monitor = select_monitor(sct)
-            screenshot = sct.grab(monitor)
+            frame = sct.grab(monitor)
 
             logging.info('tick %s', state.current_tick)
             try:
-                next_action = farm_method(screenshot, state)
+                next_action = farm_method(frame, state)
 
             except AssertionError as exc:
                 if auto_restart:
@@ -43,7 +43,7 @@ def select_farming_module(resource: Resources) -> Callable:
     if resource is Resources.FISH:
         return fishing.tick
 
-    if resource in [Resources.COTTON, ]:
+    if resource is Resources.COTTON:
         return harvesting.tick
 
     raise NotImplementedError()
@@ -76,7 +76,7 @@ def farm_bot(
 
 
 if __name__ == '__main__':
-    debug = False
+    debug = True
     tick_limit = None
     ignore_fail = True
 

@@ -2,7 +2,7 @@
 
 import copy
 from pathlib import Path
-from typing import List, Tuple
+from typing import Dict, List
 
 import cv2  # type: ignore
 from numpy import ndarray
@@ -18,7 +18,7 @@ class Templates(object):
         self._bobber = cv2.imread(str(folder / 'bobber.png'), cv2.IMREAD_GRAYSCALE)
         self._hooking_game = cv2.imread(str(folder / 'hooking_game.png'), cv2.IMREAD_GRAYSCALE)
         self._bobber_in_game = cv2.imread(str(folder / 'bobber_in_game.png'), cv2.IMREAD_GRAYSCALE)
-        self._resources = {}
+        self._resources: Dict[str, List[ndarray]] = {}
 
     @property
     def water_template(self) -> ndarray:
@@ -45,19 +45,18 @@ class Templates(object):
         """Шаблон поплавка в миниигре."""
         return copy.deepcopy(self._bobber_in_game)
 
-    def resource(self, resource_name: str) -> List[ndarray]:
-        if resource_name not in self._resources:
-            folder = self._folder / 'resource' / resource_name
+    def resource(self, resource_name: str, level: int = 1) -> List[ndarray]:
+        index = '%s-%s' % (resource_name, str(level))
+        folder = self._folder / 'resource' / resource_name / ('level%d' % level)
 
-            self._resources[resource_name] = [
-                cv2.imread(
-                    str(folder / filename),
-                    cv2.IMREAD_COLOR,
-                )
-                for filename in folder.glob('*.png') if filename.is_file()
+        if index not in self._resources:
+            files = [filename for filename in folder.glob('*.png') if filename.is_file()]
+            self._resources[index] = [
+                cv2.imread(str(folder / filename), cv2.IMREAD_COLOR)
+                for filename in files
             ]
 
-        return copy.deepcopy(self._resources[resource_name])
+        return copy.deepcopy(self._resources[index])
 
 
 client = Templates(settings.TEMPLATES_FOLDER)

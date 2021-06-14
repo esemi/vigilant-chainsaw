@@ -25,6 +25,7 @@ def tick(screenshot: ScreenShot, state: State, resource: Resources = Resources.C
     """
     color_frame = numpy.array(screenshot)
     cv_operations.show_current_frame(state, color_frame, 'init screen')
+    color_frame = cv2.cvtColor(color_frame, cv2.COLOR_BGRA2BGR)
 
     if state.action == Action.INIT:
         # ищем ресурсы для сбора

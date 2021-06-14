@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import IntEnum, auto
-from typing import Optional
+from typing import List, Optional
 
 from bot.gui import Area, Point
 
@@ -10,6 +10,7 @@ from bot.gui import Area, Point
 class Action(IntEnum):
     INIT = auto()
     START = auto()
+    HARVEST = auto()
     WAITING_FOR_A_BOBBER = auto()
     WAITING_FOR_A_NIBBLE = auto()
     WAITING_FOR_A_HOOKING_GAME = auto()
@@ -22,6 +23,7 @@ class MetaInfo(object):
     bobber_area: Optional[Area] = None
     game_area: Optional[Area] = None
     nibble_tick_counter: int = 0
+    target_points: Optional[List[Point]] = None
 
 
 @dataclass

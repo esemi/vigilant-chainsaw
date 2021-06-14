@@ -1,20 +1,16 @@
 """Методы работы с библиотекой для CV."""
 import logging
-from enum import Enum
 from typing import List, Union
 
 import cv2  # type: ignore
-from PIL import Image
-from mss.screenshot import ScreenShot
+from PIL import Image  # type: ignore
+from mss.screenshot import ScreenShot  # type: ignore
 from numpy import ndarray
 
 from bot import settings
+from bot.color import Color
 from bot.gui import Area, Point
 from bot.state import State
-
-
-class Color(tuple, Enum):
-    BLACK = (0, 255, 0)
 
 
 def mark_area_group(frame: ndarray, areas: List[Area], color: Color = Color.BLACK):

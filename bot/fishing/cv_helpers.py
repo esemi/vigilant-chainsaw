@@ -7,8 +7,6 @@ from typing import List
 
 import cv2  # type: ignore
 import numpy as np
-from PIL import Image  # type: ignore
-from mss.screenshot import ScreenShot  # type: ignore
 from numpy import ndarray
 
 from bot import cv_operations, settings, templates

@@ -2,6 +2,7 @@
 
 import logging
 import math
+import random
 from dataclasses import dataclass
 from typing import List, Tuple
 
@@ -61,6 +62,14 @@ def mouse_move_to(point: Point, duration: float = 0.6):
 def left_click(duration: float):
     logging.debug('click start')
     pyautogui.mouseDown(button=pyautogui.LEFT)
-    pyautogui.sleep(duration)
+    wait_sec(duration)
     pyautogui.mouseUp(button=pyautogui.LEFT)
     logging.debug('click end')
+
+
+def wait_sec(duration: float):
+    pyautogui.sleep(duration)
+
+
+def random_point() -> Point:
+    return Point(random.randint(10, 100), random.randint(10, 100))

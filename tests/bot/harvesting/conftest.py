@@ -9,4 +9,5 @@ def screenshots_dir() -> Path:
 
 
 def cotton_templates() -> List[str]:
-    return [str(screenshots_dir() / i) for i in ['cotton-example.png', 'cotton-example2.png', 'cotton-example3.png', 'cotton-example4.png']]
+    folder = screenshots_dir() / 'cotton'
+    return [str(filename) for filename in folder.glob('*.png') if filename.is_file()]
