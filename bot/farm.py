@@ -3,19 +3,14 @@
 import logging
 import time
 from collections import Counter
-from dataclasses import dataclass
-from enum import Enum, auto
 from typing import Callable, Optional
 
 from mss import models, mss  # type: ignore
 
 from bot.fishing import main as fishing
+from bot.harvesting import main as harvesting
+from bot.resources import Resources
 from bot.state import Action, State
-
-
-@dataclass
-class Resources(int, Enum):
-    FISH = auto()
 
 
 def select_monitor(sct) -> models.Monitor:
@@ -29,11 +24,11 @@ def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: Sta
             counter['last_tick'] = state.current_tick
 
             monitor = select_monitor(sct)
-            screenshot = sct.grab(monitor)
+            frame = sct.grab(monitor)
 
             logging.info('tick %s', state.current_tick)
             try:
-                next_action = farm_method(screenshot, state)
+                next_action = farm_method(frame, state)
 
             except AssertionError as exc:
                 if auto_restart:
@@ -47,6 +42,9 @@ def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: Sta
 def select_farming_module(resource: Resources) -> Callable:
     if resource is Resources.FISH:
         return fishing.tick
+
+    if resource is Resources.COTTON:
+        return harvesting.tick
 
     raise NotImplementedError()
 
@@ -78,10 +76,16 @@ def farm_bot(
 
 
 if __name__ == '__main__':
-    debug = False
+    debug = True
     tick_limit = None
     ignore_fail = True
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(Resources.FISH, debug_mode=debug, tick_limit=tick_limit, start_delay=5, restart_if_error=ignore_fail)
+    cnt = farm_bot(
+        Resources.COTTON,
+        debug_mode=debug,
+        tick_limit=tick_limit,
+        start_delay=5,
+        restart_if_error=ignore_fail,
+    )
     logging.info(cnt)

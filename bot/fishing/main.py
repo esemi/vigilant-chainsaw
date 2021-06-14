@@ -5,8 +5,8 @@ import cv2  # type: ignore
 import numpy
 from mss.screenshot import ScreenShot  # type: ignore
 
-from bot import settings
-from bot.fishing import actions, cv_helpers
+from bot import cv_operations, settings
+from bot.fishing import actions
 from bot.state import Action, State
 
 
@@ -23,7 +23,7 @@ def tick(screenshot: ScreenShot, state: State) -> Action:  # noqa: WPS231; WPS22
 
     """
     color_frame = numpy.array(screenshot)
-    cv_helpers.show_current_frame(state, color_frame, 'init screen')
+    cv_operations.show_current_frame(state, color_frame, 'init screen')
     gray_frame = cv2.cvtColor(color_frame, cv2.COLOR_BGR2GRAY)
 
     if state.action == Action.INIT:

@@ -20,6 +20,7 @@ $ poetry install
 ### run tests
 ```bash
 $ poetry run mypy bot/
+$ poetry run flake8 bot
 $ poetry run pytest -ra -v --cov=bot  tests
 ```
 
@@ -32,17 +33,13 @@ $ poetry run TODO
 ## TODO
 
 ### common
+- parse cli args
 - readme runner
-- select water cell only once
 - deploy to pypi & badges
-- sigint handler
 
 ### fishing bot
-- parse cli args
 - change algo for looking_for_nibbles method
 
 ### harvesting bot
-- prototype
-- search resources by args
-- select random cell for hravest
-- harvest and retry
+- harvest not only cotton
+- harvest by scan all frame: by mouse position + placeholder text

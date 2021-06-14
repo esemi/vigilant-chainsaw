@@ -1,16 +1,16 @@
 """Методы работы с библиотекой для CV."""
-
-from enum import Enum
-from typing import List
+import logging
+from typing import List, Union
 
 import cv2  # type: ignore
+from PIL import Image  # type: ignore
+from mss.screenshot import ScreenShot  # type: ignore
 from numpy import ndarray
 
+from bot import settings
+from bot.color import Color
 from bot.gui import Area, Point
-
-
-class Color(tuple, Enum):
-    BLACK = (0, 255, 0)
+from bot.state import State
 
 
 def mark_area_group(frame: ndarray, areas: List[Area], color: Color = Color.BLACK):
@@ -54,9 +54,31 @@ def locations_to_areas(locations: ndarray, template: Point) -> List[Area]:
 
 
 def template_to_point(template: ndarray) -> Point:
-    return Point(*template.shape[::-1])
+    return Point(template.shape[1], template.shape[0])
 
 
 def crop_frame(frame: ndarray, area: Area) -> ndarray:
     from_, to = area.from_point, area.to_point
     return frame[from_.y:to.y, from_.x:to.x]
+
+
+DEBUG_FRAMES_COUNTER = 0
+
+
+def show_current_frame(state: State, frame: Union[ScreenShot, ndarray], message: str, force: bool = False):
+    global DEBUG_FRAMES_COUNTER  # noqa: WPS420
+
+    DEBUG_FRAMES_COUNTER += 1
+
+    if not state.debug and not force:
+        return
+
+    filename = f'frame#{DEBUG_FRAMES_COUNTER}-tick#{state.current_tick}-{message}.png'  # noqa: WPS305
+    filepath = str(settings.TMP_FOLDER / filename)
+    if isinstance(frame, ScreenShot):
+        img = Image.frombytes('RGB', frame.size, frame.bgra, 'raw', 'BGRX')
+        img.thumbnail((1024, 512))
+        img.save(filepath)
+    else:
+        cv2.imwrite(filepath, frame)
+    logging.info('screenshot saved to %s: %s', str(filepath), message)

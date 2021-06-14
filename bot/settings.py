@@ -9,6 +9,7 @@ FISHING_DISTANCE_MIN = 80.0
 # сколько времени жмём на кнопку для заброски крючка в воду при рыбалке
 FISHING_CLICK_DURATION = 0.5
 
+
 # сколько времени жмём на кнопку для подсечки улова
 FISHING_HOOKING_CLICK_DURATION = 2.0
 
@@ -32,3 +33,10 @@ if not TMP_FOLDER.exists():
 TEMPLATES_FOLDER = Path(__file__).parent.joinpath('../data/templates')
 if not TEMPLATES_FOLDER.exists():
     TEMPLATES_FOLDER.mkdir(exist_ok=True)
+
+
+# сколько времени жмём на кнопку для сбора ресурсов
+HARVESTING_CLICK_DURATION = 0.5
+
+# сколько времени жмём на кнопку для сбора ресурсов
+HARVESTING_PAUSE = 10
