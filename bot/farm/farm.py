@@ -5,6 +5,7 @@ import time
 from collections import Counter
 from typing import Callable, Optional
 
+import click
 from mss import models, mss  # type: ignore
 
 from bot.fishing import main as fishing
@@ -17,7 +18,13 @@ def select_monitor(sct) -> models.Monitor:
     return sct.monitors[-1]
 
 
-def _farming_strategy(farm_method: Callable, max_tick: Optional[int], state: State, counter: Counter, auto_restart: bool):
+def _farming_strategy(
+    farm_method: Callable,
+    max_tick: Optional[int],
+    state: State,
+    counter: Counter,
+    auto_restart: bool,
+):
     with mss() as sct:
         while max_tick is None or state.current_tick < max_tick:
             state.current_tick += 1
@@ -49,13 +56,7 @@ def select_farming_module(resource: Resources) -> Callable:
     raise NotImplementedError()
 
 
-def farm_bot(
-    resource: Resources,
-    debug_mode: bool = False,
-    tick_limit: Optional[int] = 5,
-    start_delay: int = 5,
-    restart_if_error: bool = False,
-) -> Counter:
+def farm_bot(resource: Resources, debug_mode: bool, tick_limit: Optional[int], start_delay: int = 5) -> Counter:
     counter: Counter = Counter()
     state = State(debug=debug_mode)
     logging.info('farm bot on %s %s %s', tick_limit, start_delay, resource)
@@ -66,7 +67,7 @@ def farm_bot(
     farm_method = select_farming_module(resource)
 
     try:
-        _farming_strategy(farm_method, tick_limit, state, counter, restart_if_error)
+        _farming_strategy(farm_method, tick_limit, state, counter, auto_restart=True)
     except Exception as exc:
         logging.exception('exception captured', exc_info=exc)
     finally:
@@ -75,17 +76,15 @@ def farm_bot(
     return counter
 
 
-if __name__ == '__main__':
-    debug = True
-    tick_limit = None
-    ignore_fail = True
-
-    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-    cnt = farm_bot(
-        Resources.COTTON,
-        debug_mode=debug,
-        tick_limit=tick_limit,
-        start_delay=5,
-        restart_if_error=ignore_fail,
-    )
-    logging.info(cnt)
+@click.command()
+@click.option(
+    '--resource',
+    required=True,
+    type=click.Choice(['fish', 'cotton']),
+    help='Farming resource name',
+)
+@click.option('--limit', required=True, type=int, help='Farming tick limit')
+@click.option('--verbose', type=bool, default=False, help='Enables verbose mode')
+def runner(resource: str, limit: int, verbose: bool = False):
+    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO)
+    farm_bot(Resources(resource), verbose, limit)

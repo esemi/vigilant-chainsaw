@@ -11,6 +11,7 @@ mss = "^6.1.0"
 numpy = "^1.20.3"
 Pillow = "^8.2.0"
 PyAutoGUI = "^0.9.52"
+click = "^8.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

@@ -4,6 +4,12 @@
 [![pytest](https://github.com/esemi/vigilant-chainsaw/actions/workflows/unittests.yml/badge.svg?branch=master)](https://github.com/esemi/vigilant-chainsaw/actions/workflows/unittests.yml)
 ---
 
+Небольшой бот для фарминга ресурсов в mmorpg [albion online](https://albiononline.com/ru/home).
+
+Умеет: 
+- рыбачить при наличии водоёма на экране;
+- собирать весь хлопок на экране.
+
 ## Project local running
 
 ### install
@@ -24,22 +30,26 @@ $ poetry run flake8 bot
 $ poetry run pytest -ra -v --cov=bot  tests
 ```
 
+### usage 
+```bash
+$ poetry run python -m bot.farm --help
+```
+
 ### run fishing
 ```bash
-$ poetry run TODO
+$ poetry run python -m bot.farm --resource=fish --limit=1000
+```
+
+### run cotton crawling
+```bash
+$ poetry run python -m bot.farm --resource=cotton --limit=1000
 ```
 
 
 ## TODO
-
-### common
-- parse cli args
-- readme runner
-- deploy to pypi & badges
-
 ### fishing bot
 - change algo for looking_for_nibbles method
 
 ### harvesting bot
 - harvest not only cotton
-- harvest by scan all frame: by mouse position + placeholder text
+- harvest by scan all frame: by mouse position + placeholder text (?)

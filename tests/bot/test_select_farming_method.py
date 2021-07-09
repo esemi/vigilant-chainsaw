@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 from pytest_cases import parametrize
 
-from bot.farm import select_farming_module
+from bot.farm.farm import select_farming_module
 from bot.resources import Resources
 
 
