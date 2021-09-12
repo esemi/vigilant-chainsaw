@@ -11,7 +11,7 @@ Albion-online bot
 - рыбачить при наличии водоёма на экране;
 - собирать весь хлопок на экране.
 
-## Project local running
+![image](https://user-images.githubusercontent.com/4115497/132979592-b2b896dc-2062-4795-82d3-b98b5d209ff5.png)
 
 ### install
 ```bash
