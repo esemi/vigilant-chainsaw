@@ -1,4 +1,5 @@
-# vigilant-chainsaw
+Albion-online bot
+---
 
 [![wemake-python-styleguide](https://github.com/esemi/vigilant-chainsaw/actions/workflows/linters.yml/badge.svg?branch=master)](https://github.com/esemi/vigilant-chainsaw/actions/workflows/linters.yml)
 [![pytest](https://github.com/esemi/vigilant-chainsaw/actions/workflows/unittests.yml/badge.svg?branch=master)](https://github.com/esemi/vigilant-chainsaw/actions/workflows/unittests.yml)
@@ -44,12 +45,3 @@ $ poetry run python -m bot.farm --resource=fish --limit=1000
 ```bash
 $ poetry run python -m bot.farm --resource=cotton --limit=1000
 ```
-
-
-## TODO
-### fishing bot
-- change algo for looking_for_nibbles method
-
-### harvesting bot
-- harvest not only cotton
-- harvest by scan all frame: by mouse position + placeholder text (?)
